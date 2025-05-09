@@ -1,0 +1,1598 @@
+{
+	"info": {
+		"_postman_id": "50e94ceb-d01c-4ec9-a9e4-402190adc56a",
+		"name": "BODI_WEB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35363578"
+	},
+	"item": [
+		{
+			"name": "US",
+			"item": [
+				{
+					"name": "New customer - Order placement for BODi membership - 3 month plan with no coach pick (BODi WEB) - US",
+					"item": [
+						{
+							"name": "Usercreation",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"console.log(\"ENVironment >>>>\"+pm.environment.name);\r",
+											"pm.collectionVariables.set(\"ENV\",pm.environment.name);\r",
+											"function randomStringAlphabets(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')\r",
+											"{\r",
+											"    let length = _.random(minValue, maxValue),\r",
+											"        randomString = \"\";\r",
+											"\r",
+											"    for (let i = 0; i < length; i++)\r",
+											"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+											"    return randomString;\r",
+											"}\r",
+											"var fname = randomStringAlphabets(7,7);\r",
+											"console.log(`fname >> `+fname);\r",
+											"var lname = randomStringAlphabets(8,8);\r",
+											"console.log(`lname >> `+lname);\r",
+											"var userName=fname+\"_\"+lname;\r",
+											"console.log(`userName >> `+userName);\r",
+											"pm.collectionVariables.set(\"fname\", fname)\r",
+											"pm.collectionVariables.set(\"lname\", lname)\r",
+											"pm.collectionVariables.set(\"username\", userName)\r",
+											"function generateRandom5DigitNumber() {\r",
+											"    \r",
+											"    return Math.floor(1000 + Math.random() * 90000);\r",
+											"}\r",
+											"\r",
+											"var randomNumber = generateRandom5DigitNumber();\r",
+											"console.log(randomNumber);\r",
+											"pm.collectionVariables.set(\"randomdigit\",randomNumber );\r",
+											"\r",
+											"//var extfname=pm.iterationData.get('Firstname');\r",
+											"var extfname=pm.variables.replaceIn('{{$randomFirstName}}');\r",
+											"//var extlastname=pm.iterationData.get('Lastname');\r",
+											"var extlastname=pm.variables.replaceIn('{{$randomLastName}}');\r",
+											"var Email= fname+lname+\"_bodiussp@beachbodytest.com\";\r",
+											"\r",
+											"\r",
+											"pm.collectionVariables.set(\"email\", Email)\r",
+											"const moment = require('moment');\r",
+											"pm.collectionVariables.set(\"todayDate\", moment().format(\"YYYY/MM/DD\"));\r",
+											"console.log(`EMAIL >>>> `+Email +\" ::: date >>>\"+pm.collectionVariables.get(\"todayDate\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body",
+											"console.log(`Create Identity Payload : `+ payload)",
+											"console.log(`Create Identity API : `+ pm.request.url)",
+											"console.log(`Create Identity API : ",
+											" {{CreateUserUrlXAPIKEY}} >>>> `+ pm.request.auth);",
+											"//Extraction of guid",
+											"var jsonObject = xml2Json(responseBody);",
+											"",
+											"var jsondata = jsonObject[\"S:Envelope\"][\"S:Body\"][\"ns2:createOIMIdentityResponse\"][\"create_identity_response\"];",
+											"var iterationIndex= pm.info.iteration;",
+											"//Set the collection variables",
+											"pm.collectionVariables.set(\"iterno\", iterationIndex);",
+											"pm.collectionVariables.set(\"guid\", jsondata.guid);",
+											"",
+											"// Status code validation script",
+											"pm.test(\"Validation of Status code is 200\", function () {",
+											"if (pm.response.code === 200) {",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");",
+											" console.log(`****************** Customer Creation API **************`);",
+											"    console.log(`RESPONSE <<<<<< `+responseBody);",
+											"    console.log(`******************  Customer Creation API **************`);",
+											"} else {",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);",
+											"    pm.execution.setNextRequest(null);",
+											"   // postman.setNextRequest(null);",
+											"}",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": " \r\n\r\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prox=\"http://proxy.beachbody.com/\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <prox:createOIMIdentity>\r\n            <!--Optional:-->\r\n            <create_identity_request>\r\n                <!--Optional:-->\r\n                <user_account>\r\n                    <!--You may enter the following 39 items in any order-->\r\n                    <firstName>{{fname}}</firstName>\r\n                    <lastName>{{lname}}</lastName>\r\n                    <username>{{username}}</username>\r\n                    <email>{{email}}</email>\r\n                    <password>{{Password}}</password>\r\n                    <dob>{{DOB}}</dob>\r\n                    <gender>{{Gender}}</gender>\r\n                    <customerType>REGISTEREDUSER,CLUB</customerType>\r\n                    <sponsorREPID>7</sponsorREPID>\r\n                    <preferredLanguage>en_US</preferredLanguage>\r\n                    <telephoneNumber>{{TelephoneNumber}}</telephoneNumber>\r\n                    <startDate>{{todayDate}}</startDate>\r\n                    <inputSystem>SOA_EBS</inputSystem>\r\n                    <govID xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\r\n                    <billAddress1>{{BillAddress1}}</billAddress1>\r\n                    <billAddress2>{{BillAddress2}}</billAddress2>\r\n                    <billCity>{{BillCity}}</billCity>\r\n                    <billState>{{BillState}}</billState>\r\n                    <billPostalCode>{{BillPostalCode}}</billPostalCode>\r\n                    <billCountry>{{BillCountry}}</billCountry>\r\n                    <shipAddress1>{{ShipAddress1}}</shipAddress1>\r\n                    <shipAddress2>{{ShipAddress2}}</shipAddress2>\r\n                    <shipCity>{{ShipCity}}</shipCity>\r\n                    <shipState>{{ShipState}}</shipState>\r\n                    <shipPostalCode>{{ShipPostalCode}}</shipPostalCode>\r\n                    <shipCountry>{{ShipCountry}}</shipCountry>\r\n                    <termAndCondition>{{todayDate}}</termAndCondition>\r\n                    <preferredProduct>{{PreferredProduct}}</preferredProduct>\r\n                </user_account>\r\n            </create_identity_request>\r\n        </prox:createOIMIdentity>\r\n    </soapenv:Body>\r\n</soapenv:Envelope>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/account",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GNCID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Save the gncCustomerID in collection variables\r",
+											"var jsonData = pm.response.json();\r",
+											"console.log(jsonData)\r",
+											"pm.collectionVariables.set(\"customerID\", jsonData.searchUser.gncCustomerID);\r",
+											"pm.collectionVariables.set(\"sponsorID\", jsonData.searchUser.sponsorREPID);\r",
+											"console.log('gncCustomerID > > ' +pm.collectionVariables.get(\"customerID\"));\r",
+											"console.log('sponsorREPID > > ' +pm.collectionVariables.get(\"sponsorID\"));\r",
+											"// Save the current timestamp in the environment\r",
+											"function Timestamp() {\r",
+											"    const now = new Date();\r",
+											"    const year = now.getFullYear();\r",
+											"    const month = String(now.getMonth() + 1).padStart(2, '0');\r",
+											"    const date = String(now.getDate()).padStart(2, '0');\r",
+											"    const hours = String(now.getHours()).padStart(2, '0');\r",
+											"    const minutes = String(now.getMinutes()).padStart(2, '0');\r",
+											"    const seconds = String(now.getSeconds()).padStart(2, '0');\r",
+											"    const milliseconds = String(now.getMilliseconds()).padStart(3, '0');\r",
+											"\r",
+											"    return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}.${milliseconds}`;\r",
+											"}\r",
+											"\r",
+											"var currentTimestamp = Timestamp();\r",
+											"pm.environment.set(\"Timestamp\", currentTimestamp);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"\r",
+											"// Test to validate the email, firstname, lastname, and username in the response\r",
+											"pm.test(\"Response data validation\", function () {\r",
+											"   \r",
+											"   \r",
+											"    pm.expect(jsonData.searchUser.firstName).to.eql(pm.collectionVariables.get(\"fname\"));\r",
+											"    //pm.expect(jsonData.searchUser.gncCustomerID).to.be.a(Number);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"// Test to validate if the response field is a number\r",
+											"pm.test(\"Response body contains text\", function(){\r",
+											"    try {\r",
+											"        pm.expect(pm.response.text()).to.include(\"gncCustomerID\");\r",
+											"    } catch (e) {\r",
+											"        // If the assertion fails, stop any further requests\r",
+											"        \r",
+											"         pm.execution.setNextRequest(null)\r",
+											"        throw e;  \r",
+											"    }\r",
+											"});\r",
+											"\r",
+											" \r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [7000]);\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"searchFilterName\": \"guid\",\r\n  \"searchFilterValue\": \"{{guid}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/searchIdentity",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"searchIdentity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "three month plan with no coach pick",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"function generateRandomNineDigitNumber() {\r",
+											"    // Generate a random number between 100000000 (inclusive) and 999999999 (inclusive)\r",
+											"    return Math.floor(Math.random() * 900000000) + 100000000;\r",
+											"}\r",
+											"var sysnumber =generateRandomNineDigitNumber();\r",
+											"pm.collectionVariables.set(\"origSysDocumentRef\",sysnumber);\r",
+											"pm.collectionVariables.set(\"timestamp\",(new Date()).toISOString());\r",
+											"console.log(\"timestampUtcIso8601 >> \"+pm.collectionVariables.get(\"timestamp\"));\r",
+											"setTimeout(function(){}, [1000]);\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Status code validation script\r",
+											"var payload=pm.request.body\r",
+											"console.log(`Payload for One year BODi free trail : `+ payload)\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											" console.log(\"one month plan with no coach pick -> order created >>> QE_\"+pm.collectionVariables.get(\"origSysDocumentRef\"));\r",
+											"} else {\r",
+											"    //pm.expect(1).to.equal(2);\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"const iterno = pm.collectionVariables.get(\"iterno\");\r",
+											"const guid = pm.collectionVariables.get(\"guid\");\r",
+											"const orderid= pm.collectionVariables.get(\"origSysDocumentRef\")\r",
+											"const email=pm.collectionVariables.get(\"email\");\r",
+											"\r",
+											"console.log(`GUID of one month plan with no coach pick iteration(us) ${iterno+1}: ${guid}`);\r",
+											"console.log(`Email of one month plan with no coach pick iteration(US) ${iterno+1}: ${email}`);\r",
+											"console.log(`Order ID of one month plan with no coach pick iteration(US) ${iterno+1}: ${\"QE_\"+orderid}`);\r",
+											"\r",
+											"\r",
+											"//setting global variable to sent as json file for order creation details\r",
+											"pm.globals.set(guid,`${\"QE_\"+orderid}`)\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{OrderImportUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"environment\": \"{{ENV}}\",\r\n    \"orderFrom\": \"COMMERCE_ORDER_DR\",\r\n    \"creationDate\": \"{{timestamp}}\",\r\n    \"header\": {\r\n        \"sourceSystem\": \"BODI WEB\",\r\n        \"correlationId\": \"QE_{{origSysDocumentRef}}\",\r\n        \"origSysDocumentRef\": \"QE_{{origSysDocumentRef}}\",\r\n        \"businessUnit\": \"BEACHBODY\",\r\n        \"orderDateTime\": \"{{timestamp}}\",\r\n        \"offerCode\": \"US-DRWEBBB-USD\",\r\n        \"orderType\": \"WEB ORDER_BB\",\r\n        \"shipMethodCode\": \"{{ShipMethod}}\",\r\n        \"orderSubtotal\": 0,\r\n        \"orderShAmount\": 0,\r\n        \"orderTaxRate\": 0,\r\n        \"orderTaxAmount\": 0,\r\n        \"totalTaxAmount\": 0,\r\n        \"personalUse\": \"Y\",\r\n        \"priceSuppression\": \"N\",\r\n        \"commissionableOrder\": \"BB_NO_COACH_PICK\",\r\n        \"zeroOutShakelogyFlag\": \"0\",\r\n        \"referenceCode\": \"7134555923546981103954\",\r\n        \"ipAddress\": \"\",\r\n        \"sessionId\": \"\",\r\n        \"referenceValue\": \"QE_{{origSysDocumentRef}}\",\r\n        \"paymentTerm\": \"1 Pay\",\r\n        \"paymentPlanCode\": \"1 Pay\",\r\n        \"paymentMethod\": \"CREDIT_CARD\",\r\n        \"ccType\": \"{{CCType}}\",\r\n        \"ccNo\": \"{{CCNumber}}\",\r\n        \"holderNameOnCc\": \"Dave Test\",\r\n        \"expDate\": \"2028-02-01\",\r\n        \"authCode\": \"888888\",\r\n        \"currencyCode\": \"USD\",\r\n        \"customer\": {\r\n            \"firstName\": \"{{fname}}\",\r\n            \"lastName\": \"{{lname}}\",\r\n            \"billToAddress1\": \"{{BillAddress1}}\",\r\n            \"billToAddress2\": \"{{BillAddress2}}\",\r\n            \"billToCity\": \"{{BillCity}}\",\r\n            \"billToState\": \"{{BillState}}\",\r\n            \"billToZipcode\": \"{{BillPostalCode}}\",\r\n            \"billToCountry\": \"{{BillCountry}}\",\r\n            \"shipToFirstName\": \"{{fname}}\",\r\n            \"shipToLastName\": \"{{lname}}\",\r\n            \"shipToAddress1\": \"{{ShipAddress1}}\",\r\n            \"shipToAddress2\": \"{{ShipAddress2}}\",\r\n            \"shipToCity\": \"{{ShipCity}}\",\r\n            \"shipToState\": \"{{ShipState}}\",\r\n            \"shipToZipcode\": \"{{ShipPostalCode}}\",\r\n            \"shipToCountry\": \"{{ShipCountry}}\",\r\n            \"guid\": \"{{guid}}\",\r\n            \"customerNo\": \"{{origSysDocumentRef}}\",\r\n            \"customerType\": \"CLUB\",\r\n            \"gncCustomerId\": \"{{customerID}}\",\r\n            \"gncSponsorId\": \"{{sponsorID}}\",\r\n            \"communication\": [\r\n                {\r\n                    \"commType\": \"EMAIL\",\r\n                    \"commValue\": \"{{email}}\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                }\r\n            ]\r\n        },\r\n        \"lines\": [\r\n            {\r\n                \"lineNumber\": 1,\r\n                \"offerCode\": \"US-DRWEBBB-USD\",\r\n                \"itemNumber\": \"BBBODINT41\",\r\n                \"originalPrice\": 0,\r\n                \"retailPrice\": 0,\r\n                \"commissions\": \"0\",\r\n                \"subscriptionCommissions\": 0,\r\n                \"cv\": \"0\",\r\n                \"pv\": \"0\",\r\n                \"qty\": 1,\r\n                \"uom\": \"EA\",\r\n                \"fastStartAmount\": \"0\",\r\n                \"hdTriggerFlag\": \"1\",\r\n                \"itemPrice\": 0,\r\n                \"itemPaymentPlanCode\": \"1 Pay\",\r\n                \"primaryProductType\": \"GEN\",\r\n                \"sendToByd\": \"Y\",\r\n                \"sourceSystem\": \"BODI WEB\"\r\n            }\r\n        ],\r\n        \"adjustment\": []\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{OrderImportUrl}}/orders/import",
+									"host": [
+										"{{OrderImportUrl}}"
+									],
+									"path": [
+										"orders",
+										"import"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Existing customer - Order placement for BODi membership -  1 year(BODi WEB) - US",
+					"item": [
+						{
+							"name": "Usercreation",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"console.log(\"ENVironment >>>>\"+pm.environment.name);\r",
+											"pm.collectionVariables.set(\"ENV\",pm.environment.name);\r",
+											"function randomStringAlphabets(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')\r",
+											"{\r",
+											"    let length = _.random(minValue, maxValue),\r",
+											"        randomString = \"\";\r",
+											"\r",
+											"    for (let i = 0; i < length; i++)\r",
+											"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+											"    return randomString;\r",
+											"}\r",
+											"var fname = randomStringAlphabets(7,7);\r",
+											"console.log(`fname >> `+fname);\r",
+											"var lname = randomStringAlphabets(8,8);\r",
+											"console.log(`lname >> `+lname);\r",
+											"var userName=fname+\"_\"+lname;\r",
+											"console.log(`userName >> `+userName);\r",
+											"pm.collectionVariables.set(\"fname\", fname)\r",
+											"pm.collectionVariables.set(\"lname\", lname)\r",
+											"pm.collectionVariables.set(\"username\", userName)\r",
+											"function generateRandom5DigitNumber() {\r",
+											"    \r",
+											"    return Math.floor(1000 + Math.random() * 90000);\r",
+											"}\r",
+											"\r",
+											"var randomNumber = generateRandom5DigitNumber();\r",
+											"console.log(randomNumber);\r",
+											"pm.collectionVariables.set(\"randomdigit\",randomNumber );\r",
+											"\r",
+											"//var extfname=pm.iterationData.get('Firstname');\r",
+											"var extfname=pm.variables.replaceIn('{{$randomFirstName}}');\r",
+											"//var extlastname=pm.iterationData.get('Lastname');\r",
+											"var extlastname=pm.variables.replaceIn('{{$randomLastName}}');\r",
+											"var Email= fname+lname+\"_bodiussp@beachbodytest.com\";\r",
+											"\r",
+											"\r",
+											"pm.collectionVariables.set(\"email1\", Email)\r",
+											"const moment = require('moment');\r",
+											"pm.collectionVariables.set(\"todayDate\", moment().format(\"YYYY/MM/DD\"));\r",
+											"console.log(`EMAIL >>>> `+Email +\" ::: date >>>\"+pm.collectionVariables.get(\"todayDate\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Extraction of guid\r",
+											"var payload=pm.request.body\r",
+											"console.log(`Create Identity Payload : `+ payload)\r",
+											"console.log(`Create Identity API : `+ pm.request.url)\r",
+											"console.log(`Create Identity API : \r",
+											" {{CreateUserUrlXAPIKEY}} >>>> `+ pm.request.auth);\r",
+											"var jsonObject = xml2Json(responseBody);\r",
+											"\r",
+											"var jsondata = jsonObject[\"S:Envelope\"][\"S:Body\"][\"ns2:createOIMIdentityResponse\"][\"create_identity_response\"];\r",
+											"pm.collectionVariables.set(\"guid1\", jsondata.guid);\r",
+											"var iterationIndex= pm.info.iteration;\r",
+											"//Set the collection variables\r",
+											"pm.collectionVariables.set(\"iterno\", iterationIndex);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(`REPONSE <<<<<<`);\r",
+											"    console.log(`Status code is 200: Proceeding to the next request.`);\r",
+											"     console.log(`****************** Customer Creation API **************`);\r",
+											"    console.log(`RESPONSE <<<<<< `+responseBody);\r",
+											"    console.log(`******************  Customer Creation API **************`);\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"setTimeout(function(){}, [5000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": " <soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prox=\"http://proxy.beachbody.com/\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <prox:createOIMIdentity>\r\n            <!--Optional:-->\r\n            <create_identity_request>\r\n                <!--Optional:-->\r\n                <user_account>\r\n                    <!--You may enter the following 39 items in any order-->\r\n                    <firstName>{{fname}}</firstName>\r\n                    <lastName>{{lname}}</lastName>\r\n                    <username>{{username}}</username>\r\n                    <email>{{email1}}</email>\r\n                    <password>{{Password}}</password>\r\n                    <dob>{{DOB}}</dob>\r\n                    <gender>{{Gender}}</gender>\r\n                    <customerType>REGISTEREDUSER,CLUB</customerType>\r\n                    <sponsorREPID>{{Sponsorrepid}}</sponsorREPID>\r\n                    <preferredLanguage>en_US</preferredLanguage>\r\n                    <telephoneNumber>{{TelephoneNumber}}</telephoneNumber>\r\n                    <startDate>{{todayDate}}</startDate>\r\n                    <inputSystem>SOA_EBS</inputSystem>\r\n                    <govID xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\r\n                    <billAddress1>{{BillAddress1}}</billAddress1>\r\n                    <billAddress2>{{BillAddress2}}</billAddress2>\r\n                    <billCity>{{BillCity}}</billCity>\r\n                    <billState>{{BillState}}</billState>\r\n                    <billPostalCode>{{BillPostalCode}}</billPostalCode>\r\n                    <billCountry>{{BillCountry}}</billCountry>\r\n                    <shipAddress1>{{ShipAddress1}}</shipAddress1>\r\n                    <shipAddress2>{{ShipAddress2}}</shipAddress2>\r\n                    <shipCity>{{ShipCity}}</shipCity>\r\n                    <shipState>{{ShipState}}</shipState>\r\n                    <shipPostalCode>{{ShipPostalCode}}</shipPostalCode>\r\n                    <shipCountry>{{ShipCountry}}</shipCountry>\r\n                    <termAndCondition>{{todayDate}}</termAndCondition>\r\n                    <preferredProduct>{{PreferredProduct}}</preferredProduct>\r\n                </user_account>\r\n            </create_identity_request>\r\n        </prox:createOIMIdentity>\r\n    </soapenv:Body>\r\n</soapenv:Envelope>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/account",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GNCID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Save the gncCustomerID in collection variables\r",
+											"setTimeout(function(){}, [7000]);\r",
+											"var jsonData = pm.response.json();\r",
+											"console.log(jsonData)\r",
+											"pm.collectionVariables.set(\"customerID1\", jsonData.searchUser.gncCustomerID);\r",
+											"pm.collectionVariables.set(\"sponsorREPID\", jsonData.searchUser.sponsorREPID);\r",
+											"\r",
+											"// Save the current timestamp in the environment\r",
+											"function Timestamp() {\r",
+											"    const now = new Date();\r",
+											"    const year = now.getFullYear();\r",
+											"    const month = String(now.getMonth() + 1).padStart(2, '0');\r",
+											"    const date = String(now.getDate()).padStart(2, '0');\r",
+											"    const hours = String(now.getHours()).padStart(2, '0');\r",
+											"    const minutes = String(now.getMinutes()).padStart(2, '0');\r",
+											"    const seconds = String(now.getSeconds()).padStart(2, '0');\r",
+											"    const milliseconds = String(now.getMilliseconds()).padStart(3, '0');\r",
+											"\r",
+											"    return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}.${milliseconds}`;\r",
+											"}\r",
+											"\r",
+											"var currentTimestamp = Timestamp();\r",
+											"pm.environment.set(\"Timestamp\", currentTimestamp);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(`****************** GNC Search ***********`);\r",
+											"    console.log('Status code is 200: Proceeding to the next request.');\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"\r",
+											"// Test to validate the email, firstname, lastname, and username in the response\r",
+											"pm.test(\"Response data validation\", function () {\r",
+											"   \r",
+											"   \r",
+											"    pm.expect(jsonData.searchUser.firstName).to.eql(pm.collectionVariables.get(\"fname\"));\r",
+											"    //pm.expect(jsonData.searchUser.gncCustomerID).to.be.a(Number);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response body contains text\", function(){\r",
+											"    try {\r",
+											"        pm.expect(pm.response.text()).to.include(\"gncCustomerID\");\r",
+											"    } catch (e) {\r",
+											"        // If the assertion fails, stop any further requests\r",
+											"        \r",
+											"         pm.execution.setNextRequest(null)\r",
+											"        throw e;  // Rethrow the exception to ensure the test is marked as failed\r",
+											"    }\r",
+											"});\r",
+											"setTimeout(function(){}, [5000]);\r",
+											"// Test to validate if the response field is a number\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [7000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"searchFilterName\": \"guid\",\r\n  \"searchFilterValue\": \"{{guid1}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/searchIdentity",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"searchIdentity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order placement (pre-requisite)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body",
+											"console.log(`OI Payload : `+ payload)",
+											"pm.test(\"validation of Status code is 200\", function () {",
+											"if (pm.response.code === 200) {",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");",
+											"console.log(\"Order placement (pre-requisite) -> order created >>> QE_\"+pm.collectionVariables.get(\"origSysDocumentRef1\"))",
+											"",
+											"} else {",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);",
+											"    pm.execution.setNextRequest(null);",
+											"   // postman.setNextRequest(null);",
+											"}",
+											"})",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [5000]);\r",
+											"function generateRandomNineDigitNumber() {\r",
+											"    // Generate a random number between 100000000 (inclusive) and 999999999 (inclusive)\r",
+											"    return Math.floor(Math.random() * 900000000) + 100000000;\r",
+											"}\r",
+											"var sysnumber =generateRandomNineDigitNumber();\r",
+											"pm.collectionVariables.set(\"origSysDocumentRef1\",sysnumber);\r",
+											"pm.collectionVariables.set(\"timestamp\",(new Date()).toISOString());\r",
+											"console.log(\"timestampUtcIso8601 >> \"+pm.collectionVariables.get(\"timestamp\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{OrderImportUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"environment\": \"{{ENV}}\",\r\n    \"orderFrom\": \"TBB\",\r\n    \"creationDate\": \"{{timestamp}}\",\r\n    \"header\": {\r\n        \"sourceSystem\": \"TBB WEB\",\r\n        \"correlationId\": \"QE_{{origSysDocumentRef1}}\",\r\n        \"origSysDocumentRef\": \"QE_{{origSysDocumentRef1}}\",\r\n        \"businessUnit\": \"NETWORK\",\r\n        \"orderDateTime\": \"{{timestamp}}\",\r\n        \"offerCode\": \"US-REGISTEREDUSER-USD\",\r\n        \"orderType\": \"WEB ORDER_NT\",\r\n        \"shipMethodCode\": \"{{ShipMethod}}\",\r\n        \"orderSubtotal\": 129.95,\r\n        \"orderShAmount\": 3.00,\r\n        \"orderTaxRate\": 0.0,\r\n        \"totalTaxAmount\": 0.00,\r\n        \"orderTaxAmount\": 0.00,\r\n        \"personalUse\": \"Y\",\r\n        \"priceSuppression\": \"N\",\r\n        \"zeroOutShakeolagy\": \"0\",\r\n        \"referenceCode\": \"6189278216976179003001\",\r\n        \"ipAddress\": \"\",\r\n        \"sessionId\": \"\",\r\n        \"paymentPlanCode\": \"1 Pay\",\r\n        \"paymentTerm\": \"1 Pay\",\r\n        \"paymentMethod\": \"CREDIT_CARD\",\r\n        \"ccType\": \"{{CCType}}\",\r\n        \"ccNo\": \"{{CCNumber}}\",\r\n        \"expDate\": \"2028-01-30\",\r\n        \"authCode\": \"888888\",\r\n        \"holderNameOnCc\": \"{{fname}} {{lname}}\",\r\n        \"currencyCode\": \"USD\",\r\n        \"customer\": {\r\n            \"guid\": \"{{guid1}}\",\r\n            \"origSysDocumentRef\": \"QE_{{origSysDocumentRef1}}\",\r\n            \"customerNo\": \"{{origSysDocumentRef1}}\",\r\n            \"customerType\": \"REGISTEREDUSER\",\r\n            \"gncCustomerId\": \"{{customerID1}}\",\r\n            \"gncSponsorId\": \"{{sponsorREPID}}\",\r\n            \"firstName\": \"{{fname}}\",\r\n            \"lastName\": \"{{lname}}\",\r\n            \"billToAddress1\": \"{{BillAddress1}}\",\r\n            \"billToAddress2\": \"{{BillAddress2}}\",\r\n            \"billToCity\": \"{{BillCity}}\",\r\n            \"billToState\": \"{{BillState}}\",\r\n            \"billToZipcode\": \"{{BillPostalCode}}\",\r\n            \"billToCountry\": \"{{BillCountry}}\",\r\n            \"shipToFirstName\": \"{{fname}}\",\r\n            \"shipToLastName\": \"{{lname}}\",\r\n            \"shipToAddress1\": \"{{ShipAddress1}}\",\r\n            \"shipToAddress2\": \"{{ShipAddress2}}\",\r\n            \"shipToCity\": \"{{ShipCity}}\",\r\n            \"shipToState\": \"{{ShipState}}\",\r\n            \"shipToZipcode\": \"{{ShipPostalCode}}\",\r\n            \"shipToCountry\": \"{{ShipCountry}}\",\r\n            \"communication\": [\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"TBB WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"SHIP_TO\",\r\n                    \"sourceSystem\": \"TBB WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{email1}}\",\r\n                    \"commType\": \"EMAIL\",\r\n                    \"purpose\": \"\",\r\n                    \"primary\": \"\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"TBB WEB\"\r\n                }\r\n            ]\r\n        },\r\n        \"lines\": [\r\n            {\r\n                \"origSysDocumentRef\": \"QE_{{origSysDocumentRef1}}\",\r\n                \"lineNumber\": 1,\r\n                \"offerCode\": \"US-REGISTEREDUSER-USD\",\r\n                \"itemNumber\": \"{{Skuidprq}}\",\r\n                \"originalPrice\": 129.95,\r\n                \"retailPrice\": 129.95,\r\n                \"commissions\": \"0\",\r\n                \"subscriptionCommissions\": \"0.0\",\r\n                \"cv\": \"90.00\",\r\n                \"pv\": \"90.00\",\r\n                \"qty\": 1,\r\n                \"uom\": \"EA\",\r\n                \"fastStartAmount\": \"0.0\",\r\n                \"hdTriggerFlag\": 0,\r\n                \"itemPrice\": 129.95,\r\n                \"itemPaymentPlanCode\": \"1 Pay\",\r\n                \"sendToByd\": \"Y\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{OrderImportUrl}}/orders/import",
+									"host": [
+										"{{OrderImportUrl}}"
+									],
+									"path": [
+										"orders",
+										"import"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "One year free trail",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body",
+											"console.log(`Payload for One year BODi free trail : `+ payload)",
+											"pm.test(\"validation of Status code is 200\", function () {",
+											"if (pm.response.code === 200) {",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");",
+											"    console.log(\"One year free trail -> order created >>> QE_\"+pm.collectionVariables.get(\"origSysDocumentRef2\"));",
+											"",
+											"} else {",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);",
+											"    pm.execution.setNextRequest(null);",
+											"   // postman.setNextRequest(null);",
+											"}",
+											"})",
+											"// Retrieve the values of the collection variables",
+											"const iterno = pm.collectionVariables.get(\"iterno\");",
+											"const guid= pm.collectionVariables.get(\"guid1\");",
+											"const orderid=pm.collectionVariables.get(\"origSysDocumentRef2\")",
+											"",
+											"const email= pm.collectionVariables.get(\"email1\")",
+											"// Log the values to the console in the desired format",
+											"console.log(`----------- Iteration >>>> ${iterno+1} ------------`)",
+											"console.log(`Order placement for BODi membership -  1 year, free trial iteration `)",
+											"console.log(`GUID : ${guid}`);",
+											"console.log(`Email : ${email}`);",
+											"console.log(`Order (ORIG_SYS_DOCUMENT_REF) : ${\"QE_\"+orderid}`);",
+											"console.log(`----------- Iteration >>>> ${iterno+1} ------------`)",
+											"",
+											"//setting global variable to sent as json file for order creation details",
+											"pm.globals.set(guid,`${\"QE_\"+orderid}`)",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [7000]);\r",
+											"function generateRandomNineDigitNumber() {\r",
+											"    // Generate a random number between 100000000 (inclusive) and 999999999 (inclusive)\r",
+											"    return Math.floor(Math.random() * 900000000) + 100000000;\r",
+											"}\r",
+											"var sysnumber =generateRandomNineDigitNumber();\r",
+											"pm.collectionVariables.set(\"origSysDocumentRef2\",sysnumber);\r",
+											"pm.collectionVariables.set(\"timestamp\",(new Date()).toISOString());\r",
+											"console.log(\"timestampUtcIso8601 >> \"+pm.collectionVariables.get(\"timestamp\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{OrderImportUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"environment\": \"{{ENV}}\",\r\n    \"orderFrom\": \"COMMERCE_ORDER_DR\",\r\n    \"creationDate\": \"{{timestamp}}\",\r\n    \"header\": {\r\n        \"sourceSystem\": \"BODI WEB\",\r\n        \"correlationId\": \"QE_{{origSysDocumentRef2}}\",\r\n        \"origSysDocumentRef\": \"QE_{{origSysDocumentRef2}}\",\r\n        \"businessUnit\": \"BEACHBODY\",\r\n        \"orderDateTime\": \"{{timestamp}}\",\r\n        \"offerCode\": \"US-DRWEBBB-USD\",\r\n        \"orderType\": \"WEB ORDER_BB\",\r\n        \"shipMethodCode\": \"{{ShipMethod}}\",\r\n        \"orderSubtotal\": 179,\r\n        \"orderShAmount\": 0.00,\r\n        \"orderTaxRate\": 0.0,\r\n        \"totalTaxAmount\": 0.00,\r\n        \"orderTaxAmount\": 0.00,\r\n        \"personalUse\": \"Y\",\r\n        \"priceSuppression\": \"N\",\r\n        \"zeroOutShakeolagy\": \"0\",\r\n        \"referenceCode\": \"6189278216976179003001\",\r\n        \"ipAddress\": \"\",\r\n        \"sessionId\": \"\",\r\n        \"paymentPlanCode\": \"1 Pay\",\r\n        \"paymentTerm\": \"1 Pay\",\r\n        \"paymentMethod\": \"CREDIT_CARD\",\r\n        \"ccType\": \"{{CCType}}\",\r\n        \"ccNo\": \"{{CCNumber}}\",\r\n        \"expDate\": \"2028-01-30\",\r\n        \"authCode\": \"888888\",\r\n        \"holderNameOnCc\": \"{{fname}} {{lname}}\",\r\n        \"currencyCode\": \"USD\",\r\n        \"customer\": {\r\n            \"guid\": \"{{guid1}}\",\r\n            \"origSysDocumentRef\": \"QE_{{origSysDocumentRef2}}\",\r\n            \"customerNo\": \"{{origSysDocumentRef2}}\",\r\n            \"customerType\": \"REGISTEREDUSER,CLUB\",\r\n            \"gncCustomerId\": \"{{customerID1}}\",\r\n            \"gncSponsorId\": \"{{sponsorREPID}}\",\r\n            \"firstName\": \"{{fname}}\",\r\n            \"lastName\": \"{{lname}}\",\r\n            \"billToAddress1\": \"{{BillAddress1}}\",\r\n            \"billToAddress2\": \"{{BillAddress2}}\",\r\n            \"billToCity\": \"{{BillCity}}\",\r\n            \"billToState\": \"{{BillState}}\",\r\n            \"billToZipcode\": \"{{BillPostalCode}}\",\r\n            \"billToCountry\": \"{{BillCountry}}\",\r\n            \"shipToFirstName\": \"{{fname}}\",\r\n            \"shipToLastName\": \"{{lname}}\",\r\n            \"shipToAddress1\": \"{{ShipAddress1}}\",\r\n            \"shipToAddress2\": \"{{ShipAddress2}}\",\r\n            \"shipToCity\": \"{{ShipCity}}\",\r\n            \"shipToState\": \"{{ShipState}}\",\r\n            \"shipToZipcode\": \"{{ShipPostalCode}}\",\r\n            \"shipToCountry\": \"{{ShipCountry}}\",\r\n            \"communication\": [\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"SHIP_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{email1}}\",\r\n                    \"commType\": \"EMAIL\",\r\n                    \"purpose\": \"\",\r\n                    \"primary\": \"\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                }\r\n            ]\r\n        },\r\n        \"lines\": [\r\n            {\r\n                \"origSysDocumentRef\": \"QE_{{origSysDocumentRef2}}\",\r\n                \"lineNumber\": 1,\r\n                \"offerCode\": \"US-DRWEBBB-USD\",\r\n                \"itemNumber\": \"{{SkuidTC2}}\",\r\n                \"originalPrice\": 179,\r\n                \"retailPrice\": 179,\r\n                \"commissions\": \"0\",\r\n                \"subscriptionCommissions\": \"0.0\",\r\n                \"cv\": \"0.00\",\r\n                \"pv\": \"0.00\",\r\n                \"qty\": 1,\r\n                \"uom\": \"EA\",\r\n                \"fastStartAmount\": \"0.0\",\r\n                \"hdTriggerFlag\": 0,\r\n                \"itemPrice\": 179,\r\n                \"itemPaymentPlanCode\": \"1 Pay\",\r\n                \"sendToByd\": \"Y\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{OrderImportUrl}}/orders/import",
+									"host": [
+										"{{OrderImportUrl}}"
+									],
+									"path": [
+										"orders",
+										"import"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "CA",
+			"item": [
+				{
+					"name": "New customer - Order placement for BODi membership - 3 month plan with no coach pick (BODi WEB) - CA",
+					"item": [
+						{
+							"name": "Usercreation CA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"console.log(\"ENVironment >>>>\"+pm.environment.name);\r",
+											"pm.collectionVariables.set(\"ENV\",pm.environment.name);\r",
+											"function randomStringAlphabets(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')\r",
+											"{\r",
+											"    let length = _.random(minValue, maxValue),\r",
+											"        randomString = \"\";\r",
+											"\r",
+											"    for (let i = 0; i < length; i++)\r",
+											"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+											"    return randomString;\r",
+											"}\r",
+											"var fname = randomStringAlphabets(7,7);\r",
+											"console.log(`fname >> `+fname);\r",
+											"var lname = randomStringAlphabets(8,8);\r",
+											"console.log(`lname >> `+lname);\r",
+											"var userName=fname+\"_\"+lname;\r",
+											"console.log(`userName >> `+userName);\r",
+											"pm.collectionVariables.set(\"fname\", fname)\r",
+											"pm.collectionVariables.set(\"lname\", lname)\r",
+											"pm.collectionVariables.set(\"username\", userName)\r",
+											"function generateRandom5DigitNumber() {\r",
+											"    \r",
+											"    return Math.floor(1000 + Math.random() * 90000);\r",
+											"}\r",
+											"\r",
+											"var randomNumber = generateRandom5DigitNumber();\r",
+											"console.log(randomNumber);\r",
+											"pm.collectionVariables.set(\"randomdigit\",randomNumber );\r",
+											"\r",
+											"//var extfname=pm.iterationData.get('Firstname');\r",
+											"var extfname=pm.variables.replaceIn('{{$randomFirstName}}');\r",
+											"//var extlastname=pm.iterationData.get('Lastname');\r",
+											"var extlastname=pm.variables.replaceIn('{{$randomLastName}}');\r",
+											"\r",
+											"var Email= fname+lname+\"_bodicasp@beachbodytest.com\";\r",
+											"\r",
+											"const moment = require('moment');\r",
+											"pm.collectionVariables.set(\"todayDate\", moment().format(\"YYYY/MM/DD\"));\r",
+											"console.log(`EMAIL >>>> `+Email +\" ::: date >>>\"+pm.collectionVariables.get(\"todayDate\"));\r",
+											"pm.collectionVariables.set(\"emailCA\", Email)\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Print Payload used\r",
+											"var payload=pm.request.body\r",
+											"console.log(`Create Identity Payload : `+ payload)\r",
+											"console.log(`Create Identity API : `+ pm.request.url)\r",
+											"console.log(`Create Identity API : \r",
+											" {{CreateUserUrlXAPIKEY}} >>>> `+ pm.request.auth);\r",
+											"//Extraction of guid\r",
+											"var jsonObject = xml2Json(responseBody);\r",
+											"\r",
+											"var jsondata = jsonObject[\"S:Envelope\"][\"S:Body\"][\"ns2:createOIMIdentityResponse\"][\"create_identity_response\"];\r",
+											"pm.collectionVariables.set(\"guidCA\", jsondata.guid);\r",
+											"\r",
+											"var iterationIndex= pm.info.iteration;\r",
+											"//Set the collection variables\r",
+											"pm.collectionVariables.set(\"iterno\", iterationIndex);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"setTimeout(function(){}, [5000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prox=\"http://proxy.beachbody.com/\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <prox:createOIMIdentity>\r\n            <!--Optional:-->\r\n            <create_identity_request>\r\n                <!--Optional:-->\r\n                <user_account>\r\n                    <!--You may enter the following 39 items in any order-->\r\n                    <firstName>{{fname}}</firstName>\r\n                    <lastName>{{lname}}</lastName>\r\n                    <username>{{username}}</username>\r\n                    <email>{{emailCA}}</email>\r\n                    <password>{{Password}}</password>\r\n                    <dob>{{DOB}}</dob>\r\n                    <gender>{{Gender}}</gender>\r\n                    <customerType>REGISTEREDUSER,CLUB</customerType>\r\n                    <sponsorREPID>7</sponsorREPID>\r\n                    <preferredLanguage>en_CA</preferredLanguage>\r\n                    <telephoneNumber>{{TelephoneNumber}}</telephoneNumber>\r\n                    <startDate>{{todayDate}}</startDate>\r\n                    <inputSystem>SOA_EBS</inputSystem>\r\n                    <govID xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\r\n                    <billAddress1>{{BillAddress1}}</billAddress1>\r\n                    <billAddress2>{{BillAddress2}}</billAddress2>\r\n                    <billCity>{{BillCity}}</billCity>\r\n                    <billState>{{BillState}}</billState>\r\n                    <billPostalCode>{{BillPostalCode}}</billPostalCode>\r\n                    <billCountry>{{BillCountry}}</billCountry>\r\n                    <shipAddress1>{{ShipAddress1}}</shipAddress1>\r\n                    <shipAddress2>{{ShipAddress2}}</shipAddress2>\r\n                    <shipCity>{{ShipCity}}</shipCity>\r\n                    <shipState>{{ShipState}}</shipState>\r\n                    <shipPostalCode>{{ShipPostalCode}}</shipPostalCode>\r\n                    <shipCountry>{{ShipCountry}}</shipCountry>\r\n                    <termAndCondition>{{todayDate}}</termAndCondition>\r\n                    <preferredProduct>{{PreferredProduct}}</preferredProduct>\r\n                </user_account>\r\n            </create_identity_request>\r\n        </prox:createOIMIdentity>\r\n    </soapenv:Body>\r\n</soapenv:Envelope>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/account",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GNCID CA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Save the gncCustomerID in collection variables\r",
+											"var jsonData = pm.response.json();\r",
+											"console.log(jsonData)\r",
+											"pm.collectionVariables.set(\"customerIDCA\", jsonData.searchUser.gncCustomerID);\r",
+											"pm.collectionVariables.set(\"sponsorID\", jsonData.searchUser.sponsorREPID);\r",
+											"console.log('gncCustomerID > > ' +pm.collectionVariables.get(\"customerIDCA\"));\r",
+											"console.log('sponsorREPID > > ' +pm.collectionVariables.get(\"sponsorID\"));\r",
+											"// Save the current timestamp in the environment\r",
+											"function Timestamp() {\r",
+											"    const now = new Date();\r",
+											"    const year = now.getFullYear();\r",
+											"    const month = String(now.getMonth() + 1).padStart(2, '0');\r",
+											"    const date = String(now.getDate()).padStart(2, '0');\r",
+											"    const hours = String(now.getHours()).padStart(2, '0');\r",
+											"    const minutes = String(now.getMinutes()).padStart(2, '0');\r",
+											"    const seconds = String(now.getSeconds()).padStart(2, '0');\r",
+											"    const milliseconds = String(now.getMilliseconds()).padStart(3, '0');\r",
+											"\r",
+											"    return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}.${milliseconds}`;\r",
+											"}\r",
+											"\r",
+											"var currentTimestamp = Timestamp();\r",
+											"pm.environment.set(\"Timestamp\", currentTimestamp);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"\r",
+											"// Test to validate the email, firstname, lastname, and username in the response\r",
+											"pm.test(\"Response data validation\", function () {\r",
+											"   \r",
+											"   \r",
+											"    pm.expect(jsonData.searchUser.firstName).to.eql(pm.collectionVariables.get(\"fname\"));\r",
+											"    //pm.expect(jsonData.searchUser.gncCustomerID).to.be.a(Number);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response body contains text\", function(){\r",
+											"    try {\r",
+											"        pm.expect(pm.response.text()).to.include(\"gncCustomerID\");\r",
+											"    } catch (e) {\r",
+											"        // If the assertion fails, stop any further requests\r",
+											"        \r",
+											"         pm.execution.setNextRequest(null)\r",
+											"        throw e;  // Rethrow the exception to ensure the test is marked as failed\r",
+											"    }\r",
+											"});\r",
+											"setTimeout(function(){}, [5000]);\r",
+											"// Test to validate if the response field is a number\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [7000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"searchFilterName\": \"guid\",\r\n  \"searchFilterValue\": \"{{guidCA}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/searchIdentity",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"searchIdentity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "one month plan with no coach pick CA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"function generateRandomNineDigitNumber() {\r",
+											"    // Generate a random number between 100000000 (inclusive) and 999999999 (inclusive)\r",
+											"    return Math.floor(Math.random() * 900000000) + 100000000;\r",
+											"}\r",
+											"var sysnumber =generateRandomNineDigitNumber();\r",
+											"pm.collectionVariables.set(\"origSysDocumentRefCA\",sysnumber);\r",
+											"pm.collectionVariables.set(\"timestamp\",(new Date()).toISOString());\r",
+											"console.log(\"timestampUtcIso8601 >> \"+pm.collectionVariables.get(\"timestamp\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body\r",
+											"console.log(`Payload for New customer - Order placement for BODi membership - 1 month plan with no coach pick (BODi web) : `+ payload)\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"const iterno = pm.collectionVariables.get(\"iterno\");\r",
+											"const guid = pm.collectionVariables.get(\"guidCA\");\r",
+											"const orderid= pm.collectionVariables.get(\"origSysDocumentRefCA\")\r",
+											"const email=pm.collectionVariables.get(\"emailCA\")\r",
+											"\r",
+											"// Log the values to the console in the desired format\r",
+											"console.log(`----------- Iteration >>>> ${iterno+1} ------------`)\r",
+											"console.log(`Order placement for Order placement for B One month plan with no coach pick (BODi web) (CA) - iteration `)\r",
+											"console.log(`GUID : ${guid}`);\r",
+											"console.log(`Email : ${email}`);\r",
+											"console.log(`Order (ORIG_SYS_DOCUMENT_REF) : ${\"QE_\"+orderid}`);\r",
+											"console.log(`----------- Iteration >>>> ${iterno+1} ------------`)\r",
+											"//setting global variable to sent as json file for order creation details\r",
+											"pm.globals.set(guid,`${\"QE_\"+orderid}`)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{OrderImportUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"environment\": \"{{ENV}}\",\r\n    \"orderFrom\": \"COMMERCE_ORDER_DR\",\r\n    \"creationDate\": \"{{timestamp}}\",\r\n    \"header\": {\r\n        \"sourceSystem\": \"BODI WEB\",\r\n        \"correlationId\": \"QE_{{origSysDocumentRefCA}}\",\r\n        \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA}}\",\r\n        \"businessUnit\": \"BEACHBODY\",\r\n        \"orderDateTime\": \"{{timestamp}}\",\r\n        \"offerCode\": \"CA-DRWEBBB-CAD\",\r\n        \"orderType\": \"WEB ORDER_BB\",\r\n        \"shipMethodCode\": \"{{ShipMethod}}\",\r\n        \"orderSubtotal\": 0,\r\n        \"orderShAmount\": 0,\r\n        \"orderTaxRate\": 0,\r\n        \"orderTaxAmount\": 0,\r\n        \"totalTaxAmount\": 0,\r\n        \"personalUse\": \"Y\",\r\n        \"priceSuppression\": \"N\",\r\n        \"commissionableOrder\": \"BB_NO_COACH_PICK\",\r\n        \"zeroOutShakelogyFlag\": \"0\",\r\n        \"referenceCode\": \"7134555923546981103954\",\r\n        \"ipAddress\": \"\",\r\n        \"sessionId\": \"\",\r\n        \"referenceValue\": \"QE_{{origSysDocumentRefCA}}\",\r\n        \"paymentTerm\": \"1 Pay\",\r\n        \"paymentPlanCode\": \"1 Pay\",\r\n        \"paymentMethod\": \"CREDIT_CARD\",\r\n        \"ccType\": \"{{CCType}}\",\r\n        \"ccNo\": \"{{CCNumber}}\",\r\n        \"holderNameOnCc\": \"{{fname}} {{lname}}\",\r\n        \"expDate\": \"2028-02-01\",\r\n        \"authCode\": \"888888\",\r\n        \"currencyCode\": \"CAD\",\r\n        \"customer\": {\r\n            \"guid\": \"{{guidCA}}\",\r\n            \"customerNo\": \"{{origSysDocumentRefCA}}\",\r\n            \"customerType\": \"REGISTEREDUSER,CLUB\",\r\n            \"gncCustomerId\": \"{{customerIDCA}}\",\r\n            \"gncSponsorId\": \"{{sponsorID}}\",\r\n            \"firstName\": \"{{fname}}\",\r\n            \"lastName\": \"{{lname}}\",\r\n            \"billToAddress1\": \"{{BillAddress1}}\",\r\n            \"billToAddress2\": \"{{BillAddress2}}\",\r\n            \"billToCity\": \"{{BillCity}}\",\r\n            \"billToState\": \"{{BillState}}\",\r\n            \"billToZipcode\": \"{{BillPostalCode}}\",\r\n            \"billToCountry\": \"{{BillCountry}}\",\r\n            \"shipToFirstName\": \"{{fname}}\",\r\n            \"shipToLastName\": \"{{lname}}\",\r\n            \"shipToAddress1\": \"{{ShipAddress1}}\",\r\n            \"shipToAddress2\": \"{{ShipAddress2}}\",\r\n            \"shipToCity\": \"{{ShipCity}}\",\r\n            \"shipToState\": \"{{ShipState}}\",\r\n            \"shipToZipcode\": \"{{ShipPostalCode}}\",\r\n            \"shipToCountry\": \"{{ShipCountry}}\",\r\n            \"communication\": [\r\n                {\r\n                    \"commType\": \"EMAIL\",\r\n                    \"commValue\": \"{{emailCA}}\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                }\r\n            ],\r\n            \"sourceSystem\": \"BODI WEB\"\r\n        },\r\n        \"lines\": [\r\n            {\r\n                \"lineNumber\": 1,\r\n                \"offerCode\": \"CA-DRWEBBB-CAD\",\r\n                \"itemNumber\": \"BBCABODINT41\",\r\n                \"originalPrice\": 0,\r\n                \"retailPrice\": 0,\r\n                \"commissions\": \"0\",\r\n                \"subscriptionCommissions\": 0,\r\n                \"cv\": \"0\",\r\n                \"pv\": \"0\",\r\n                \"qty\": 1,\r\n                \"uom\": \"EA\",\r\n                \"fastStartAmount\": \"0\",\r\n                \"hdTriggerFlag\": \"1\",\r\n                \"itemPrice\": 0,\r\n                \"itemPaymentPlanCode\": \"1 Pay\",\r\n                \"primaryProductType\": \"GEN\",\r\n                \"sendToByd\": \"Y\",\r\n                \"sourceSystem\": \"BODI WEB\"\r\n            }\r\n        ],\r\n        \"adjustment\": []\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{OrderImportUrl}}/orders/import",
+									"host": [
+										"{{OrderImportUrl}}"
+									],
+									"path": [
+										"orders",
+										"import"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Existing customer - Order placement for BODi membership -  1 year, free trial (BODi web) - CA",
+					"item": [
+						{
+							"name": "Usercreation CA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"console.log(\"ENVironment >>>>\"+pm.environment.name);\r",
+											"pm.collectionVariables.set(\"ENV\",pm.environment.name);\r",
+											"function randomStringAlphabets(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')\r",
+											"{\r",
+											"    let length = _.random(minValue, maxValue),\r",
+											"        randomString = \"\";\r",
+											"\r",
+											"    for (let i = 0; i < length; i++)\r",
+											"        randomString += dataSet.charAt(Math.floor(Math.random() * dataSet.length));\r",
+											"    return randomString;\r",
+											"}\r",
+											"var fname = randomStringAlphabets(7,7);\r",
+											"console.log(`fname >> `+fname);\r",
+											"var lname = randomStringAlphabets(8,8);\r",
+											"console.log(`lname >> `+lname);\r",
+											"var userName=fname+\"_\"+lname;\r",
+											"console.log(`userName >> `+userName);\r",
+											"pm.collectionVariables.set(\"fname\", fname)\r",
+											"pm.collectionVariables.set(\"lname\", lname)\r",
+											"pm.collectionVariables.set(\"username\", userName)\r",
+											"function generateRandom5DigitNumber() {\r",
+											"    \r",
+											"    return Math.floor(1000 + Math.random() * 90000);\r",
+											"}\r",
+											"\r",
+											"var randomNumber = generateRandom5DigitNumber();\r",
+											"console.log(randomNumber);\r",
+											"pm.collectionVariables.set(\"randomdigit\",randomNumber );\r",
+											"\r",
+											"//var extfname=pm.iterationData.get('Firstname');\r",
+											"var extfname=pm.variables.replaceIn('{{$randomFirstName}}');\r",
+											"//var extlastname=pm.iterationData.get('Lastname');\r",
+											"var extlastname=pm.variables.replaceIn('{{$randomLastName}}');\r",
+											"\r",
+											"var Email= fname+lname+\"_bodicasp@beachbodytest.com\";\r",
+											"\r",
+											"const moment = require('moment');\r",
+											"pm.collectionVariables.set(\"todayDate\", moment().format(\"YYYY/MM/DD\"));\r",
+											"console.log(`EMAIL >>>> `+Email +\" ::: date >>>\"+pm.collectionVariables.get(\"todayDate\"));\r",
+											"pm.collectionVariables.set(\"emailCA1\", Email)\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body\r",
+											"console.log(`Create Identity Payload : `+ payload)\r",
+											"console.log(`Create Identity API : `+ pm.request.url)\r",
+											"console.log(`Create Identity API : \r",
+											" {{CreateUserUrlXAPIKEY}} >>>> `+ pm.request.auth);\r",
+											"//Extraction of guid\r",
+											"var jsonObject = xml2Json(responseBody);\r",
+											"\r",
+											"var jsondata = jsonObject[\"S:Envelope\"][\"S:Body\"][\"ns2:createOIMIdentityResponse\"][\"create_identity_response\"];\r",
+											"pm.collectionVariables.set(\"guidCA1\", jsondata.guid);\r",
+											"\r",
+											"var iterationIndex= pm.info.iteration;\r",
+											"//Set the collection variables\r",
+											"pm.collectionVariables.set(\"iterno\", iterationIndex);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"setTimeout(function(){}, [5000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prox=\"http://proxy.beachbody.com/\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <prox:createOIMIdentity>\r\n            <!--Optional:-->\r\n            <create_identity_request>\r\n                <!--Optional:-->\r\n                <user_account>\r\n                    <!--You may enter the following 39 items in any order-->\r\n                    <firstName>{{fname}}</firstName>\r\n                    <lastName>{{lname}}</lastName>\r\n                    <username>{{username}}</username>\r\n                    <email>{{emailCA1}}</email>\r\n                    <password>{{Password}}</password>\r\n                    <dob>{{DOB}}</dob>\r\n                    <gender>{{Gender}}</gender>\r\n                    <customerType>REGISTEREDUSER,CLUB</customerType>\r\n                    <sponsorREPID>{{Sponsorrepid}}</sponsorREPID>\r\n                    <preferredLanguage>en_CA</preferredLanguage>\r\n                    <telephoneNumber>{{TelephoneNumber}}</telephoneNumber>\r\n                    <startDate>{{todayDate}}</startDate>\r\n                    <inputSystem>SOA_EBS</inputSystem>\r\n                    <govID xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\r\n                    <billAddress1>{{BillAddress1}}</billAddress1>\r\n                    <billAddress2>{{BillAddress2}}</billAddress2>\r\n                    <billCity>{{BillCity}}</billCity>\r\n                    <billState>{{BillState}}</billState>\r\n                    <billPostalCode>{{BillPostalCode}}</billPostalCode>\r\n                    <billCountry>{{BillCountry}}</billCountry>\r\n                    <shipAddress1>{{ShipAddress1}}</shipAddress1>\r\n                    <shipAddress2>{{ShipAddress2}}</shipAddress2>\r\n                    <shipCity>{{ShipCity}}</shipCity>\r\n                    <shipState>{{ShipState}}</shipState>\r\n                    <shipPostalCode>{{ShipPostalCode}}</shipPostalCode>\r\n                    <shipCountry>{{ShipCountry}}</shipCountry>\r\n                    <termAndCondition>{{todayDate}}</termAndCondition>\r\n                    <preferredProduct>{{PreferredProduct}}</preferredProduct>\r\n                </user_account>\r\n            </create_identity_request>\r\n        </prox:createOIMIdentity>\r\n    </soapenv:Body>\r\n</soapenv:Envelope>",
+									"options": {
+										"raw": {
+											"language": "xml"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/account",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"account"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GNCID CA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Save the gncCustomerID in collection variables\r",
+											"var jsonData = pm.response.json();\r",
+											"console.log(jsonData)\r",
+											"pm.collectionVariables.set(\"customerIDCA1\", jsonData.searchUser.gncCustomerID);\r",
+											"pm.collectionVariables.set(\"sponsorID\", jsonData.searchUser.sponsorREPID);\r",
+											"console.log('gncCustomerID > > ' +pm.collectionVariables.get(\"customerIDCA1\"));\r",
+											"console.log('sponsorREPID > > ' +pm.collectionVariables.get(\"sponsorID\"));\r",
+											"// Save the current timestamp in the environment\r",
+											"function Timestamp() {\r",
+											"    const now = new Date();\r",
+											"    const year = now.getFullYear();\r",
+											"    const month = String(now.getMonth() + 1).padStart(2, '0');\r",
+											"    const date = String(now.getDate()).padStart(2, '0');\r",
+											"    const hours = String(now.getHours()).padStart(2, '0');\r",
+											"    const minutes = String(now.getMinutes()).padStart(2, '0');\r",
+											"    const seconds = String(now.getSeconds()).padStart(2, '0');\r",
+											"    const milliseconds = String(now.getMilliseconds()).padStart(3, '0');\r",
+											"\r",
+											"    return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}.${milliseconds}`;\r",
+											"}\r",
+											"\r",
+											"var currentTimestamp = Timestamp();\r",
+											"pm.environment.set(\"Timestamp\", currentTimestamp);\r",
+											"\r",
+											"// Status code validation script\r",
+											"pm.test(\"validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"\r",
+											"// Test to validate the email, firstname, lastname, and username in the response\r",
+											"pm.test(\"Response data validation\", function () {\r",
+											"   \r",
+											"   \r",
+											"    pm.expect(jsonData.searchUser.firstName).to.eql(pm.collectionVariables.get(\"fname\"));\r",
+											"    //pm.expect(jsonData.searchUser.gncCustomerID).to.be.a(Number);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response body contains GNCustomer id\", function(){\r",
+											"    try {\r",
+											"        pm.expect(pm.response.text()).to.include(\"gncCustomerID\");\r",
+											"    } catch (e) {\r",
+											"        // If the assertion fails, stop any further requests\r",
+											"        \r",
+											"         pm.execution.setNextRequest(null)\r",
+											"        throw e;  // Rethrow the exception to ensure the test is marked as failed\r",
+											"    }\r",
+											"});\r",
+											"setTimeout(function(){}, [3000]);\r",
+											"// Test to validate if the response field is a number\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"setTimeout(function(){}, [7000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{CreateUserUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"searchFilterName\": \"guid\",\r\n  \"searchFilterValue\": \"{{guidCA1}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CreateUserUrl}}/searchIdentity",
+									"host": [
+										"{{CreateUserUrl}}"
+									],
+									"path": [
+										"searchIdentity"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Order placement (pre-requisite)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"function generateRandomNineDigitNumber() {\r",
+											"    // Generate a random number between 100000000 (inclusive) and 999999999 (inclusive)\r",
+											"    return Math.floor(Math.random() * 900000000) + 100000000;\r",
+											"}\r",
+											"var sysnumber =generateRandomNineDigitNumber();\r",
+											"pm.collectionVariables.set(\"origSysDocumentRefCA1\",sysnumber);\r",
+											"pm.collectionVariables.set(\"timestamp\",(new Date()).toISOString());\r",
+											"console.log(\"timestampUtcIso8601 >> \"+pm.collectionVariables.get(\"timestamp\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body\r",
+											"console.log(`Order placement (pre-requisite) OI Payload : `+ payload)\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"    console.log(\"Order placement (pre-requisite) -> order created >>> QE_\"+pm.collectionVariables.get(\"origSysDocumentRefCA1\"))\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"setTimeout(function(){}, [3000]);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{OrderImportUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"environment\": \"{{ENV}}\",\r\n    \"orderFrom\": \"TBB\",\r\n    \"creationDate\": \"{{timestamp}}\",\r\n    \"header\": {\r\n        \"sourceSystem\": \"TBB WEB\",\r\n        \"correlationId\": \"QE_{{origSysDocumentRefCA1}}\",\r\n        \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA1}}\",\r\n        \"businessUnit\": \"NETWORK\",\r\n        \"orderDateTime\": \"{{timestamp}}\",\r\n        \"offerCode\": \"CA-REGISTEREDUSER-CAD\",\r\n        \"orderType\": \"WEB ORDER_NT_CA\",\r\n        \"shipMethodCode\": \"{{ShipMethod}}\",\r\n        \"orderSubtotal\": 155.95,\r\n        \"orderShAmount\": 23.39,\r\n        \"orderTaxRate\": 0.0,\r\n        \"totalTaxAmount\": 23.31,\r\n        \"orderTaxAmount\": 23.31,\r\n        \"personalUse\": \"Y\",\r\n        \"priceSuppression\": \"N\",\r\n        \"zeroOutShakeolagy\": \"0\",\r\n        \"referenceCode\": \"0932253342096140093420\",\r\n        \"ipAddress\": \"\",\r\n        \"sessionId\": \"\",\r\n        \"paymentPlanCode\": \"1 Pay\",\r\n        \"paymentTerm\": \"1 Pay\",\r\n        \"paymentMethod\": \"CREDIT_CARD\",\r\n        \"ccType\": \"{{CCType}}\",\r\n        \"ccNo\": \"{{CCNumber}}\",\r\n        \"expDate\": \"2028-01-30\",\r\n        \"authCode\": \"888888\",\r\n        \"holderNameOnCc\": \"{{fname}} {{lname}}\",\r\n        \"currencyCode\": \"CAD\",\r\n        \"customer\": {\r\n            \"guid\": \"{{guidCA1}}\",\r\n            \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA1}}\",\r\n            \"customerNo\": \"{{origSysDocumentRefCA1}}\",\r\n            \"customerType\": \"REGISTEREDUSER\",\r\n            \"gncCustomerId\": \"{{customerIDCA1}}\",\r\n            \"gncSponsorId\": \"{{sponsorID}}\",\r\n            \"firstName\": \"{{fname}}\",\r\n            \"lastName\": \"{{lname}}\",\r\n            \"billToAddress1\": \"{{BillAddress1}}\",\r\n            \"billToAddress2\": \"{{BillAddress2}}\",\r\n            \"billToCity\": \"{{BillCity}}\",\r\n            \"billToState\": \"{{BillState}}\",\r\n            \"billToZipcode\": \"{{BillPostalCode}}\",\r\n            \"billToCountry\": \"{{BillCountry}}\",\r\n            \"shipToFirstName\": \"{{fname}}\",\r\n            \"shipToLastName\": \"{{lname}}\",\r\n            \"shipToAddress1\": \"{{ShipAddress1}}\",\r\n            \"shipToAddress2\": \"{{ShipAddress2}}\",\r\n            \"shipToCity\": \"{{ShipCity}}\",\r\n            \"shipToState\": \"{{ShipState}}\",\r\n            \"shipToZipcode\": \"{{ShipPostalCode}}\",\r\n            \"shipToCountry\": \"{{ShipCountry}}\",\r\n            \"communication\": [\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"TBB WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"SHIP_TO\",\r\n                    \"sourceSystem\": \"TBB WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{emailCA1}}\",\r\n                    \"commType\": \"EMAIL\",\r\n                    \"purpose\": \"\",\r\n                    \"primary\": \"\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"TBB WEB\"\r\n                }\r\n            ]\r\n        },\r\n        \"lines\": [\r\n            {\r\n                \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA1}}\",\r\n                \"lineNumber\": 1,\r\n                \"offerCode\": \"CA-REGISTEREDUSER-CAD\",\r\n                \"itemNumber\": \"{{SkuPrec}}\",\r\n                \"originalPrice\": 155.95,\r\n                \"retailPrice\": 155.95,\r\n                \"commissions\": \"0\",\r\n                \"subscriptionCommissions\": \"0.0\",\r\n                \"cv\": \"0.00\",\r\n                \"pv\": \"0.00\",\r\n                \"qty\": 1,\r\n                \"uom\": \"EA\",\r\n                \"fastStartAmount\": \"0.0\",\r\n                \"hdTriggerFlag\": 0,\r\n                \"itemPrice\": 155.95,\r\n                \"itemPaymentPlanCode\": \"1 Pay\",\r\n                \"sendToByd\": \"Y\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{OrderImportUrl}}/orders/import",
+									"host": [
+										"{{OrderImportUrl}}"
+									],
+									"path": [
+										"orders",
+										"import"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "One year free trail CA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var payload=pm.request.body\r",
+											"console.log(`Payload for One year free trail CA : `+ payload)\r",
+											"// Status code validation script\r",
+											"pm.test(\"Validation of Status code is 200\", function () {\r",
+											"if (pm.response.code === 200) {\r",
+											"    console.log(\"Status code is 200: Proceeding to the next request.\");\r",
+											"\r",
+											"} else {\r",
+											"    console.log(`Status code is ${pm.response.code}: Stopping the collection run.`);\r",
+											"    pm.execution.setNextRequest(null);\r",
+											"   // postman.setNextRequest(null);\r",
+											"}\r",
+											"})\r",
+											"// Retrieve the values of the collection variables\r",
+											"const iterno = pm.collectionVariables.get(\"iterno\");\r",
+											"const guid1= pm.collectionVariables.get(\"guidCA1\");\r",
+											"const orderid1=pm.collectionVariables.get(\"origSysDocumentRefCA2\")\r",
+											"const email1= pm.collectionVariables.get(\"emailCA1\")\r",
+											"// Log the values to the console in the desired format\r",
+											"console.log(`----------- Iteration >>>> ${iterno+1} ------------`)\r",
+											"console.log(`Order placement for Order placement for BODi membership(CA) -  1 year, free trial - iteration `)\r",
+											"console.log(`GUID : ${guid1}`);\r",
+											"console.log(`Email : ${email1}`);\r",
+											"console.log(`Order (ORIG_SYS_DOCUMENT_REF) : ${\"QE_\"+orderid1}`);\r",
+											"console.log(`----------- Iteration >>>> ${iterno+1} ------------`)\r",
+											"//setting global variable to sent as json file for order creation details\r",
+											"pm.globals.set(guid1,`${\"QE_\"+orderid1}`)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"function generateRandomNineDigitNumber() {\r",
+											"    // Generate a random number between 100000000 (inclusive) and 999999999 (inclusive)\r",
+											"    return Math.floor(Math.random() * 900000000) + 100000000;\r",
+											"}\r",
+											"var sysnumber =generateRandomNineDigitNumber();\r",
+											"pm.collectionVariables.set(\"origSysDocumentRefCA2\",sysnumber);\r",
+											"pm.collectionVariables.set(\"timestamp\",(new Date()).toISOString());\r",
+											"console.log(\"timestampUtcIso8601 >> \"+pm.collectionVariables.get(\"timestamp\"));"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{OrderImportUrlXAPIKEY}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"environment\": \"{{ENV}}\",\r\n    \"orderFrom\": \"COMMERCE_ORDER_DR\",\r\n    \"creationDate\": \"{{timestamp}}\",\r\n    \"header\": {\r\n        \"sourceSystem\": \"BODI WEB\",\r\n        \"correlationId\": \"QE_{{origSysDocumentRefCA2}}\",\r\n        \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA2}}\",\r\n        \"businessUnit\": \"BEACHBODY\",\r\n        \"orderDateTime\": \"{{timestamp}}\",\r\n        \"offerCode\": \"CA-DRWEBBB-CAD\",\r\n        \"orderType\": \"WEB ORDER_BB\",\r\n        \"shipMethodCode\": \"{{ShipMethod}}\",\r\n        \"orderSubtotal\": 215,\r\n        \"orderShAmount\": 0,\r\n        \"orderTaxRate\": 0.13,\r\n        \"orderTaxAmount\": 27.95,\r\n        \"totalTaxAmount\": 27.95,\r\n        \"personalUse\": \"Y\",\r\n        \"priceSuppression\": \"N\",\r\n        \"zeroOutShakeolagy\": \"0\",\r\n        \"referenceCode\": \"6189278216976179003001\",\r\n        \"ipAddress\": \"\",\r\n        \"sessionId\": \"\",\r\n        \"paymentPlanCode\": \"1 Pay\",\r\n        \"paymentTerm\": \"1 Pay\",\r\n        \"paymentMethod\": \"CREDIT_CARD\",\r\n        \"ccType\": \"{{CCType}}\",\r\n        \"ccNo\": \"{{CCNumber}}\",\r\n        \"expDate\": \"2028-01-30\",\r\n        \"authCode\": \"888888\",\r\n        \"holderNameOnCc\": \"{{fname}} {{lname}}\",\r\n        \"currencyCode\": \"CAD\",\r\n        \"customer\": {\r\n            \"guid\": \"{{guidCA1}}\",\r\n            \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA2}}\",\r\n            \"customerNo\": \"{{origSysDocumentRefCA2}}\",\r\n            \"customerType\": \"REGISTEREDUSER,CLUB\",\r\n            \"gncCustomerId\": \"{{customerIDCA1}}\",\r\n            \"gncSponsorId\": \"{{sponsorID}}\",\r\n            \"firstName\": \"{{fname}}\",\r\n            \"lastName\": \"{{lname}}\",\r\n            \"billToAddress1\": \"{{BillAddress1}}\",\r\n            \"billToAddress2\": \"{{BillAddress2}}\",\r\n            \"billToCity\": \"{{BillCity}}\",\r\n            \"billToState\": \"{{BillState}}\",\r\n            \"billToZipcode\": \"{{BillPostalCode}}\",\r\n            \"billToCountry\": \"{{BillCountry}}\",\r\n            \"shipToFirstName\": \"{{fname}}\",\r\n            \"shipToLastName\": \"{{lname}}\",\r\n            \"shipToAddress1\": \"{{ShipAddress1}}\",\r\n            \"shipToAddress2\": \"{{ShipAddress2}}\",\r\n            \"shipToCity\": \"{{ShipCity}}\",\r\n            \"shipToState\": \"{{ShipState}}\",\r\n            \"shipToZipcode\": \"{{ShipPostalCode}}\",\r\n            \"shipToCountry\": \"{{ShipCountry}}\",\r\n            \"communication\": [\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{TelephoneNumber}}\",\r\n                    \"commType\": \"GEN\",\r\n                    \"purpose\": \"DAY_PHONE\",\r\n                    \"primary\": \"Y\",\r\n                    \"owner\": \"SHIP_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                },\r\n                {\r\n                    \"commValue\": \"{{emailCA1}}\",\r\n                    \"commType\": \"EMAIL\",\r\n                    \"purpose\": \"\",\r\n                    \"primary\": \"\",\r\n                    \"owner\": \"BILL_TO\",\r\n                    \"sourceSystem\": \"BODI WEB\"\r\n                }\r\n            ]\r\n        },\r\n        \"lines\": [\r\n            {\r\n                \"origSysDocumentRef\": \"QE_{{origSysDocumentRefCA2}}\",\r\n                \"lineNumber\": 1,\r\n                \"offerCode\": \"CA-DRWEBBB-CAD\",\r\n                \"itemNumber\": \"BBCABODINT40\",\r\n                \"originalPrice\": 215,\r\n                \"retailPrice\": 215,\r\n                \"commissions\": \"0\",\r\n                \"subscriptionCommissions\": \"0.0\",\r\n                \"cv\": \"0.00\",\r\n                \"pv\": \"0.00\",\r\n                \"qty\": 1,\r\n                \"uom\": \"EA\",\r\n                \"fastStartAmount\": \"0.0\",\r\n                \"hdTriggerFlag\": 0,\r\n                \"itemPrice\": 215,\r\n                \"itemPaymentPlanCode\": \"1 Pay\",\r\n                \"primaryProductType\":\"GEN\",\r\n                \"sendToByd\": \"Y\"\r\n            }\r\n        ]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{OrderImportUrl}}/orders/import",
+									"host": [
+										"{{OrderImportUrl}}"
+									],
+									"path": [
+										"orders",
+										"import"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "randomdigit",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "guid",
+			"value": ""
+		},
+		{
+			"key": "customerID",
+			"value": ""
+		},
+		{
+			"key": "origSysDocumentRef",
+			"value": ""
+		},
+		{
+			"key": "email1",
+			"value": ""
+		},
+		{
+			"key": "guid1",
+			"value": ""
+		},
+		{
+			"key": "customerID1",
+			"value": ""
+		},
+		{
+			"key": "origSysDocumentRef1",
+			"value": ""
+		},
+		{
+			"key": "origSysDocumentRef2",
+			"value": ""
+		},
+		{
+			"key": "iterno",
+			"value": ""
+		},
+		{
+			"key": "emailCA",
+			"value": ""
+		},
+		{
+			"key": "guidCA",
+			"value": ""
+		},
+		{
+			"key": "customerIDCA",
+			"value": ""
+		},
+		{
+			"key": "origSysDocumentRefCA",
+			"value": ""
+		},
+		{
+			"key": "emailCA1",
+			"value": ""
+		},
+		{
+			"key": "guidCA1",
+			"value": ""
+		},
+		{
+			"key": "customerIDCA1",
+			"value": ""
+		},
+		{
+			"key": "origSysDocumentRefCA1",
+			"value": ""
+		},
+		{
+			"key": "origSysDocumentRefCA2",
+			"value": ""
+		}
+	]
+}
