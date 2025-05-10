@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       ScriptJson:
-        description: ScriptJson
+        description: 'ScriptJson'
         type: choice
         required: true
         options:
