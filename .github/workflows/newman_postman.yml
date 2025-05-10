@@ -2,13 +2,13 @@ name: Postman Collection Run
 
 on:
   workflow_dispatch:
-    inputs:
-      ScriptJson:
-        description: 'ScriptJson'
-        type: choice
-        required: true
-        options:
-        - BODI_WEB
+    # inputs:
+    #   ScriptJson:
+    #     description: 'ScriptJson'
+    #     type: choice
+    #     required: true
+    #     options:
+    #     - BODI_WEB
   
 jobs:
   test:
