@@ -1,0 +1,36 @@
+name: Postman Collection Run
+on:
+  workflow_dispatch:
+    inputs:
+      ScriptJson:
+        description: ScriptJson
+        type: choice
+        required: true
+        options:
+        - BODI_WEB
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+      - name: Install Newman
+        run: npm install -g newman
+      - name: Run Postman Collection
+        run: |
+          newman run Postman_Collection/BODI_WEB.json 
+          -e Postman_Collection/QA.postman_environment.json 
+          -d Postman_Collection/DATA/US BODI dataset.csv --iteration-count 1
+          - reporters cli,json,html \
+          - reporter-json-export newman/newman-report.json \
+          - reporter-html-export newman/newman-report.html
+          - name: Upload Reports
+      - uses: actions/upload-artifact@v2
+        if: ${{ !cancelled() }}
+        with:
+          name: newman-reports
+          path: newman/
