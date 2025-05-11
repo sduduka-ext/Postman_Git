@@ -10,10 +10,10 @@ jobs:
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-      - name: Login to Postman CLI
+      - name: BODI_WEB collection
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run API tests
         run: |
-          postman collection run "35363578-de4de25c-e6cf-47ac-8371-520f0f1a9104" -e "35363578-65ea97de-941d-48ce-bc0a-ac1d130796f5"
+          postman collection run "Postman_Collection/BODI_WEB.json" -e "Postman_Collection/QA.postman_environment.json"  -d "Postman_Collection/DATA/US BODI dataset.csv" -r htmlextra --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
           # Lint your API using Postman CLI
           postman api lint 83cae4ba-0c77-4d37-b0a9-2ba4f4036d38
