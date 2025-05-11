@@ -17,4 +17,4 @@ jobs:
         run: |
           postman collection run "Postman_Collection/BODI_WEB.json" -e "Postman_Collection/QA.postman_environment.json"  -d "Postman_Collection/DATA/US BODI dataset.csv" --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
           # Lint your API using Postman CLI
-          #postman api lint 83cae4ba-0c77-4d37-b0a9-2ba4f4036d38
+          postman api lint 83cae4ba-0c77-4d37-b0a9-2ba4f4036d38
