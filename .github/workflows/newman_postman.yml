@@ -18,7 +18,7 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run Postman Collection
         run: |
-          newman run Postman_Collection/BODI_WEB.json 
+          newman run Postman_Collection/BODI_WEB.json?apikey=${{ secrets.POSTMAN_API_KEY }} 
           -e Postman_Collection/QA.postman_environment.json 
           -d Postman_Collection/DATA/US BODI dataset.csv --iteration-count 1
           - reporters cli,json,html \
