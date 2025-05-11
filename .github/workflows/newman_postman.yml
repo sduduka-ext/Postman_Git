@@ -3,30 +3,18 @@ name: Postman CLI - CICD Exec
 on: push
 
 jobs:
-  api-tests:
+  automated-api-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-      - uses: actions/checkout@v2
-      - name: Set up Node.js
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-      - name: Install Newman
-        run: npm install -g newman
+      - name: Checkout repositor
+      - uses: actions/checkout@v4
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
       - name: BODI_WEB collection
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-      - name: Run Postman Collection
+      - name: Run API tests
         run: |
-          newman run Postman_Collection/BODI_WEB.json?apikey=${{ secrets.POSTMAN_API_KEY }} 
-          -e Postman_Collection/QA.postman_environment.json 
-          -d Postman_Collection/DATA/US BODI dataset.csv --iteration-count 1
-          - reporters cli,json,html \
-          - reporter-json-export newman/newman-report.json \
-          - reporter-html-export newman/newman-report.html
-      - name: Upload Reports
-      - uses: actions/upload-artifact@v2
-        if: ${{ !cancelled() }}
-        with:
-          name: newman-reports
-          path: newman/
+          postman collection run "Postman_Collection/BODI_WEB.json" -e "Postman_Collection/QA.postman_environment.json"  -d "Postman_Collection/DATA/US BODI dataset.csv" --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
+          # Lint your API using Postman CLI
+          #postman api lint 83cae4ba-0c77-4d37-b0a9-2ba4f4036d38
