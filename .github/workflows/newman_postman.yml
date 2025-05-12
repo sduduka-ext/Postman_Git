@@ -22,6 +22,6 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run API tests
         run: |
-          postman collection run "Postman_Collection/${{ScriptJson}}.json" -e "Postman_Collection/QA.postman_environment.json"  -d "Postman_Collection/DATA/US BODI dataset.csv" --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
+          postman collection run "Postman_Collection/${{inputs.ScriptJson}}.json" -e "Postman_Collection/QA.postman_environment.json"  -d "Postman_Collection/DATA/US BODI dataset.csv" --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
           # Lint your API using Postman CLI
           postman api lint 83cae4ba-0c77-4d37-b0a9-2ba4f4036d38
