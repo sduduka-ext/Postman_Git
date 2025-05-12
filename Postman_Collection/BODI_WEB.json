@@ -21,6 +21,7 @@
 										"exec": [
 											"console.log(\"ENVironment >>>>\"+pm.environment.name);\r",
 											"pm.collectionVariables.set(\"ENV\",pm.environment.name);\r",
+											"console.log(\"CreateUserUrlXAPIKEY x-api-key >>>> {{CreateUserUrlXAPIKEY}}\");\r",
 											"function randomStringAlphabets(minValue, maxValue, dataSet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')\r",
 											"{\r",
 											"    let length = _.random(minValue, maxValue),\r",
