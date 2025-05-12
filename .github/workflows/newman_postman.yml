@@ -22,6 +22,6 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run API tests
         run: |
-          postman collection run 35363578-de4de25c-e6cf-47ac-8371-520f0f1a9104 -e 35363578-3189c2b0-9207-46d0-a17a-aefd220964df   -d "Postman_Collection/DATA/US BODI dataset.csv" --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
+          postman collection run "35363578-de4de25c-e6cf-47ac-8371-520f0f1a9104" -e "35363578-65ea97de-941d-48ce-bc0a-ac1d130796f5" -d "Postman_Collection/DATA/US BODI dataset.csv" --reporter-htmlextra-export newman_postman/report.html --iteration-count 1
           # Lint your API using Postman CLI
           postman api lint 83cae4ba-0c77-4d37-b0a9-2ba4f4036d38
